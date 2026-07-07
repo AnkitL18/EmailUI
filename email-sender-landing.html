@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- skill:chrome -->
+<style>
+/* Credit line — bottom-right */
+.design-ui-credit {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  font: 11px/1 system-ui, sans-serif;
+  color: rgba(128,128,128,0.5);
+  pointer-events: none;
+  z-index: 2147483647;
+  transition: opacity 0.4s ease;
+  user-select: none;
+  letter-spacing: 0.02em;
+}
+
+/* Hide chrome on touch devices */
+@media (hover: none) {
+  .design-ui-credit { display: none; }
+}
+
+/* Print fixes */
+@media print {
+  * {
+    transition: none !important;
+    animation: none !important;
+    box-shadow: none !important;
+  }
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .design-ui-credit { display: none !important; }
+}
+
+</style>
+<script>
+(function () {
+    // Design-ui pages are single compositions, so the whole body is editable.
+    function markEditable() {
+        document.body.classList.add('artifact-editable');
+    }
+
+    // Credit badge with idle-fade. Hover devices only.
+    function initChromeUI() {
+        if (!matchMedia('(hover: hover)').matches) return;
+
+        var credit = document.createElement('div');
+        credit.className = 'design-ui-credit';
+        credit.setAttribute('aria-hidden', 'true');
+        credit.innerHTML = '\u{1F49C} by ClickUp Brain';
+        document.body.appendChild(credit);
+
+        var timer = null;
+        var fade = function (out) { credit.style.opacity = out ? '0' : ''; };
+        fade(true);
+        var show = function () {
+            fade(false);
+            clearTimeout(timer);
+            timer = setTimeout(function () { fade(true); }, 3000);
+        };
+        document.addEventListener('mousemove', show);
+        show();
+    }
+
+    function init() {
+        markEditable();
+        initChromeUI();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+
+</script>
+<!-- /skill:chrome -->
+<!-- skill:libraries -->
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.383.0/dist/umd/lucide.min.js" integrity="sha384-wHFvAtjmgnkA2PJcMsDaCgdipf7X7YV44X/igbLHpvGiq6T5/PvFKl93grpvtbQT" crossorigin="anonymous"></script>
+<script>document.addEventListener("DOMContentLoaded",()=>lucide.createIcons())</script>
+<!-- /skill:libraries -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mailwright — Send Emails Efficiently</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* clay + espresso on oat — warm, editorial, not the usual SaaS blue/teal */
+  --ink: oklch(28% 0.03 40);
+  --clay: oklch(58% 0.15 38);
+  --clay-deep: oklch(50% 0.15 36);
+  --clay-soft: oklch(93% 0.04 45);
+  --oat: oklch(96% 0.018 75);
+  --oat-2: oklch(93% 0.024 72);
+  --paper: oklch(99% 0.01 80);
+  --line: oklch(88% 0.02 60);
+  --line-strong: oklch(80% 0.03 52);
+  --text: oklch(32% 0.03 42);
+  --text-2: oklch(48% 0.03 44);
+  --text-3: oklch(62% 0.025 48);
+  --plum: oklch(46% 0.08 350);
+  --radius: 18px;
+  --radius-sm: 12px;
+  --shadow-card: 0 30px 60px oklch(40% 0.06 40 / 0.16), 0 10px 24px oklch(40% 0.05 40 / 0.09);
+  --shadow-soft: 0 2px 8px oklch(40% 0.04 40 / 0.07);
+  --ease: cubic-bezier(0.16,1,0.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--oat);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3{font-family:'Fraunces',Georgia,serif;line-height:1.05;letter-spacing:-0.02em;font-weight:600}
+a{color:inherit;text-decoration:none}
+svg[class*="lucide"]{flex-shrink:0;display:block}
+
+/* NAV */
+header{position:absolute;top:0;left:0;right:0;z-index:40}
+nav{max-width:1280px;margin:0 auto;padding:26px 32px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:11px;font-family:'Fraunces',serif;font-weight:600;font-size:1.2rem;color:var(--ink)}
+.brand .mk{width:36px;height:36px;border-radius:10px;background:var(--clay);display:grid;place-items:center;color:var(--paper);transform:rotate(-6deg)}
+.nav-links{display:flex;gap:30px;font-size:0.92rem;font-weight:500;color:var(--text-2)}
+.nav-links a{transition:color .15s}
+.nav-links a:hover{color:var(--clay)}
+.nav-right{display:flex;align-items:center;gap:18px}
+.nav-right .signin{font-size:0.92rem;font-weight:600;color:var(--text)}
+
+/* HERO STAGE */
+.stage{position:relative;min-height:100vh;display:grid;grid-template-columns:1.06fr 0.94fr;align-items:center;gap:48px;max-width:1280px;margin:0 auto;padding:130px 32px 70px}
+.field-bg{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.field-bg .rings{position:absolute;right:-14%;top:-8%;width:min(80vw,1000px);height:min(80vw,1000px);opacity:.5}
+.field-bg .ring{fill:none;stroke:var(--clay);stroke-width:1.1;opacity:.15}
+.field-bg .glow{position:absolute;left:-18%;bottom:-24%;width:640px;height:640px;border-radius:50%;background:radial-gradient(circle,var(--clay-soft),transparent 68%);filter:blur(20px)}
+.field-bg .amber-glow{position:absolute;right:14%;top:6%;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,oklch(92% 0.05 350),transparent 70%);filter:blur(30px);opacity:.6}
+
+/* LEFT COPY */
+.hero-copy .kicker{display:inline-flex;align-items:center;gap:9px;font-size:0.82rem;font-weight:600;color:var(--clay-deep);background:var(--paper);border:1px solid var(--line);padding:7px 14px;border-radius:100px;margin-bottom:26px;box-shadow:var(--shadow-soft)}
+.hero-copy .kicker .live{width:7px;height:7px;border-radius:50%;background:var(--clay);animation:beat 2s var(--ease) infinite}
+@keyframes beat{0%,100%{box-shadow:0 0 0 0 oklch(58% 0.15 38 / 0.5)}70%{box-shadow:0 0 0 7px oklch(58% 0.15 38 / 0)}}
+.hero-copy h1{font-size:clamp(3rem,6.2vw,5.4rem);color:var(--ink);margin-bottom:22px;font-weight:600}
+.hero-copy h1 em{font-style:italic;color:var(--clay);font-weight:500}
+.trust{display:flex;flex-direction:column;gap:14px;margin-top:4px}
+.trust .t{display:flex;align-items:center;gap:13px;font-size:1rem;font-weight:500;color:var(--text)}
+.trust .t .ic{width:34px;height:34px;border-radius:9px;background:var(--paper);border:1px solid var(--line);color:var(--clay);display:grid;place-items:center;box-shadow:var(--shadow-soft)}
+
+/* RIGHT: COMPOSE CARD */
+.compose{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-card);overflow:hidden}
+.compose::before{content:"";position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,var(--clay),var(--clay-deep) 60%,var(--plum))}
+.compose-head{padding:26px 30px 20px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;border-bottom:1px solid var(--line)}
+.compose-head h2{font-size:1.55rem;color:var(--ink);margin-bottom:3px}
+.compose-head p{font-size:0.88rem;color:var(--text-3)}
+.compose-head .env{width:46px;height:46px;border-radius:12px;background:var(--clay-soft);color:var(--clay-deep);display:grid;place-items:center;flex-shrink:0}
+.compose-body{padding:24px 30px 30px}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:0.8rem;font-weight:600;color:var(--text);margin-bottom:8px;letter-spacing:0.01em}
+.field label span{color:var(--text-3);font-weight:500}
+.inp{position:relative}
+.inp>i{position:absolute;left:15px;top:16px;color:var(--text-3);pointer-events:none}
+.inp input,.inp textarea{width:100%;padding:13px 15px 13px 44px;border:1px solid var(--line-strong);border-radius:var(--radius-sm);font-family:'Inter';font-size:0.96rem;background:var(--oat);color:var(--text);transition:all .18s var(--ease);resize:none}
+.inp input::placeholder,.inp textarea::placeholder{color:var(--text-3)}
+.inp input:focus,.inp textarea:focus{outline:none;border-color:var(--clay);background:var(--paper);box-shadow:0 0 0 4px var(--clay-soft)}
+.inp textarea{min-height:104px;line-height:1.55}
+.counter{text-align:right;font-size:0.76rem;color:var(--text-3);margin-top:6px;font-variant-numeric:tabular-nums}
+
+/* attachments */
+.attach-row{display:flex;align-items:center;gap:10px;margin:-4px 0 18px}
+.attach-btn{display:inline-flex;align-items:center;gap:8px;font-size:0.85rem;font-weight:600;color:var(--clay-deep);background:var(--clay-soft);border:1px dashed var(--clay);padding:9px 14px;border-radius:var(--radius-sm);cursor:pointer;transition:all .18s var(--ease)}
+.attach-btn:hover{background:oklch(90% 0.05 45)}
+.attach-hint{font-size:0.78rem;color:var(--text-3)}
+.attach-list{display:flex;flex-direction:column;gap:8px;margin:0 0 18px}
+.attach-list:empty{margin:0}
+.chip{display:flex;align-items:center;gap:11px;padding:9px 12px;background:var(--oat);border:1px solid var(--line);border-radius:var(--radius-sm)}
+.chip .ft{width:32px;height:32px;border-radius:8px;background:var(--clay-soft);color:var(--clay-deep);display:grid;place-items:center;flex-shrink:0}
+.chip .nm{font-size:0.86rem;font-weight:600;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip .sz{font-size:0.76rem;color:var(--text-3);font-variant-numeric:tabular-nums}
+.chip .rm{width:26px;height:26px;border-radius:6px;border:none;background:transparent;color:var(--text-3);cursor:pointer;display:grid;place-items:center}
+.chip .rm:hover{background:var(--clay-soft);color:var(--clay-deep)}
+
+.send{width:100%;padding:15px;border:none;border-radius:var(--radius-sm);background:var(--clay);color:var(--paper);font-family:'Inter';font-weight:600;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:all .2s var(--ease)}
+.send:hover{background:var(--clay-deep);transform:translateY(-1px);box-shadow:0 10px 22px oklch(52% 0.13 38 / 0.28)}
+.send:disabled{opacity:.8;cursor:default;transform:none}
+.smtp-note{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:16px;font-size:0.8rem;color:var(--text-3)}
+.smtp-note .dot{width:6px;height:6px;border-radius:50%;background:var(--clay);animation:beat 2s infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--ink);color:var(--paper);padding:14px 22px;border-radius:100px;display:flex;align-items:center;gap:10px;font-size:0.92rem;font-weight:500;box-shadow:var(--shadow-card);z-index:80;transition:transform .5s var(--ease)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast i{color:oklch(78% 0.13 140)}
+
+.foot{border-top:1px solid var(--line);background:var(--paper)}
+.foot-in{max-width:1280px;margin:0 auto;padding:22px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;font-size:0.86rem;color:var(--text-3)}
+.foot-in .l{display:flex;gap:22px}
+.foot-in a:hover{color:var(--clay)}
+
+@media(max-width:940px){
+  .stage{grid-template-columns:1fr;gap:40px;padding:120px 24px 50px;min-height:auto}
+  .nav-links{display:none}
+}
+@media(max-width:520px){
+  nav{padding:20px}
+  .compose-body{padding:22px 20px 26px}
+  .compose-head{padding:22px 20px 18px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a href="#" class="brand"><span class="mk"><i data-lucide="send" width="19" height="19"></i></span> Mailwright</a>
+    <div class="nav-links">
+      <a href="#">Product</a>
+      <a href="#">Deliverability</a>
+    </div>
+    <div class="nav-right">
+      <a href="#" class="signin">Sign in</a>
+    </div>
+  </nav>
+</header>
+
+<main class="stage">
+  <div class="field-bg" aria-hidden="true">
+    <div class="amber-glow"></div>
+    <svg class="rings" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet">
+      <path class="ring" d="M0,120 Q120,60 240,110 T460,120"/>
+      <path class="ring" d="M-20,170 Q120,100 250,160 T470,170"/>
+      <path class="ring" d="M-30,220 Q120,150 250,215 T480,230"/>
+      <path class="ring" d="M-40,270 Q130,200 260,270 T490,290"/>
+      <path class="ring" d="M-40,320 Q130,255 260,325 T500,345"/>
+      <path class="ring" d="M-40,368 Q140,305 270,378 T510,400"/>
+    </svg>
+    <div class="glow"></div>
+  </div>
+
+  <!-- LEFT -->
+  <div class="hero-copy">
+    <span class="kicker"><span class="live"></span> Now delivering over 100k emails a day</span>
+    <h1>Send emails, <em>effortlessly.</em></h1>
+    <div class="trust">
+      <div class="t"><span class="ic"><i data-lucide="shield-check" width="18" height="18"></i></span> Secure authentication, credentials never stored raw</div>
+      <div class="t"><span class="ic"><i data-lucide="zap" width="18" height="18"></i></span> Fast delivery with real-time status</div>
+      <div class="t"><span class="ic"><i data-lucide="feather" width="18" height="18"></i></span> A clean, distraction-free experience</div>
+    </div>
+  </div>
+
+  <!-- RIGHT: COMPOSE -->
+  <div class="compose">
+    <div class="compose-head">
+      <div>
+        <h2>Compose a message</h2>
+        <p>Fill it in and hit send. That's the whole thing.</p>
+      </div>
+      <span class="env"><i data-lucide="mail" width="22" height="22"></i></span>
+    </div>
+    <form class="compose-body" id="composeForm">
+      <div class="field">
+        <label for="to">Recipient</label>
+        <div class="inp">
+          <i data-lucide="at-sign" width="17" height="17"></i>
+          <input type="email" id="to" placeholder="name@company.com" required>
+        </div>
+      </div>
+      <div class="field">
+        <label for="subj">Subject</label>
+        <div class="inp">
+          <i data-lucide="tag" width="17" height="17"></i>
+          <input type="text" id="subj" placeholder="What's this about?" required>
+        </div>
+      </div>
+      <div class="field">
+        <label for="msg">Message <span>(0 / 500)</span></label>
+        <div class="inp">
+          <i data-lucide="message-square" width="17" height="17"></i>
+          <textarea id="msg" maxlength="500" placeholder="Write your message..." required></textarea>
+        </div>
+        <div class="counter" id="counter">0 / 500 characters</div>
+      </div>
+
+      <!-- ATTACHMENTS -->
+      <div class="attach-row">
+        <button type="button" class="attach-btn" id="attachBtn"><i data-lucide="paperclip" width="16" height="16"></i> Attach files</button>
+        <span class="attach-hint">PDF, images, docs · up to 25MB</span>
+        <input type="file" id="fileInput" multiple hidden>
+      </div>
+      <div class="attach-list" id="attachList"></div>
+
+      <button type="submit" class="send" id="sendBtn"><i data-lucide="send-horizontal" width="18" height="18"></i> Send Email</button>
+      <div class="smtp-note"><span class="dot"></span> Connected to Gmail SMTP · SSL/TLS on</div>
+    </form>
+  </div>
+</main>
+
+<div class="foot">
+  <div class="foot-in">
+    <span>© 2026 Mailwright. Built for people who just want the email to send.</span>
+    <div class="l">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Status</a>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i data-lucide="check-circle" width="18" height="18"></i> Email sent successfully</div>
+
+<script>
+  if(window.lucide) lucide.createIcons();
+
+  // char counter
+  var msg=document.getElementById('msg'),counter=document.getElementById('counter'),lbl=document.querySelector('label[for="msg"] span');
+  msg.addEventListener('input',function(){
+    var n=msg.value.length;
+    counter.textContent=n+' / 500 characters';
+    if(lbl) lbl.textContent='('+n+' / 500)';
+  });
+
+  // attachments
+  var attachBtn=document.getElementById('attachBtn'),fileInput=document.getElementById('fileInput'),attachList=document.getElementById('attachList');
+  var files=[];
+  attachBtn.addEventListener('click',function(){fileInput.click();});
+  fileInput.addEventListener('change',function(){
+    Array.from(fileInput.files).forEach(function(f){files.push(f);});
+    fileInput.value='';
+    renderFiles();
+  });
+  function fmtSize(b){
+    if(b<1024) return b+' B';
+    if(b<1048576) return (b/1024).toFixed(0)+' KB';
+    return (b/1048576).toFixed(1)+' MB';
+  }
+  function ext(name){var p=name.split('.');return p.length>1?p.pop().toUpperCase().slice(0,4):'FILE';}
+  function renderFiles(){
+    attachList.innerHTML='';
+    files.forEach(function(f,i){
+      var chip=document.createElement('div');chip.className='chip';
+      chip.innerHTML='<span class="ft">'+ext(f.name)+'</span>'+
+        '<span class="nm">'+f.name+'</span>'+
+        '<span class="sz">'+fmtSize(f.size)+'</span>'+
+        '<button type="button" class="rm" data-i="'+i+'"><i data-lucide="x" width="15" height="15"></i></button>';
+      attachList.appendChild(chip);
+    });
+    if(window.lucide) lucide.createIcons();
+    attachList.querySelectorAll('.rm').forEach(function(b){
+      b.addEventListener('click',function(){files.splice(+b.dataset.i,1);renderFiles();});
+    });
+  }
+
+  // send
+  var form=document.getElementById('composeForm'),btn=document.getElementById('sendBtn'),toast=document.getElementById('toast');
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    var orig=btn.innerHTML;
+    btn.disabled=true;
+    btn.innerHTML='<i data-lucide="loader-2" width="18" height="18"></i> Sending...';
+    if(window.lucide) lucide.createIcons();
+    var sp=btn.querySelector('svg'); if(sp) sp.style.animation='spin .8s linear infinite';
+    setTimeout(function(){
+      btn.innerHTML='<i data-lucide="check" width="18" height="18"></i> Sent';
+      if(window.lucide) lucide.createIcons();
+      toast.classList.add('show');
+      setTimeout(function(){toast.classList.remove('show');},2600);
+      setTimeout(function(){
+        btn.disabled=false;btn.innerHTML=orig;if(window.lucide) lucide.createIcons();
+        form.reset();files=[];renderFiles();counter.textContent='0 / 500 characters';if(lbl) lbl.textContent='(0 / 500)';
+      },1700);
+    },1500);
+  });
+</script>
+</body>
+</html>
